@@ -1,4 +1,5 @@
-import os, random
+import os, random, assets
+from sys import platform
 
 
 RIGHT, WRONG = 0, 0
@@ -42,10 +43,11 @@ def generateRandomNumbers(meth):
         num2 = random.randint(1, 11)
     return num1, num2
 
-def askUser(meth, num1, num2):
+def askUser(meth, num1, num2, quest):
     global RIGHT
     global WRONG
-    answer = input("\n    " + str(num1) + " " + meth + " " + str(num2) + " = ")
+    print("\nQuestions to go:", quest)
+    answer = input("    " + str(num1) + " " + meth + " " + str(num2) + " = ")
     if int(answer) == calc.countNumbers():
         print("--> Correct \o/")
         RIGHT += 1
@@ -53,14 +55,24 @@ def askUser(meth, num1, num2):
         print(f"--> Wrong! ._. The correct answer is {str(calc.countNumbers())}")
         WRONG += 1
 
+def osCheckAndClearScreen():
+    if platform == "win32":
+        os.system("cls")
+    else:
+        os.system("clear")
+        
+def showLogo():
+    for line in assets.logo:
+        print(line)
+
 def intro():
-    os.system("cls")
-    print("""
-This is counting program
-for all children wanting to learn to count
-    """)
-    howManyQuestions = int(input("How many questions would you like? "))
-    return howManyQuestions
+    osCheckAndClearScreen()
+    showLogo()
+    howManyQuestions = int(input("\nHello :) How many calculations do you want? (1 to 100): "))
+    if howManyQuestions < 1 or howManyQuestions > 100:
+        intro()
+    else:
+        return howManyQuestions
 
 def conclusion(quest):
     global RIGHT
@@ -77,13 +89,13 @@ if __name__ == "__main__":
     questions = intro()
     questionsStartedWith = questions
 
-    while questions > 0:
+    while questions in range(1, 100):
         method = generateRandomMethod()
         number1, number2 = generateRandomNumbers(method)
 
         calc = Calculate(method, number1, number2)
 
-        askUser(method, number1, number2)
+        askUser(method, number1, number2, questions)
         questions -= 1
 
     conclusion(questionsStartedWith)
