@@ -1,8 +1,10 @@
-import os, random, assets
+import os, random, assets, time
 from sys import platform
+from colorama import Fore, Style, Back
 
 
 RIGHT, WRONG = 0, 0
+answerDict = dict()
 
 
 class Calculate:
@@ -34,26 +36,35 @@ def generateRandomMethod():
         return "/"
 
 def generateRandomNumbers(meth):
-    num1 = random.randint(1, 100)
-    num2 = random.randint(1, 100)
+    num1 = random.randint(1, 50)
+    num2 = random.randint(1, 50)
     while num1 <= num2:
-        num1 = random.randint(1, 100)
-        num2 = random.randint(1, 100)
+        num1 = random.randint(1, 50)
+        num2 = random.randint(1, 50)
     if meth == "/" or meth == "*":  # if / or * is used, generate low num2
         num2 = random.randint(1, 11)
     return num1, num2
 
+def wait(pause):
+    time.sleep(pause)
+
 def askUser(meth, num1, num2, quest):
     global RIGHT
     global WRONG
-    print("\nQuestions to go:", quest)
-    answer = input("    " + str(num1) + " " + meth + " " + str(num2) + " = ")
+    print(f"\n{Fore.BLUE}Questions to go:{Fore.LIGHTYELLOW_EX}", quest, f"{Style.RESET_ALL}")
+    answer = input(f"    {Fore.LIGHTWHITE_EX}" + str(num1) + " " + meth + " " + str(num2) + f" = {Style.RESET_ALL}")
     if int(answer) == calc.countNumbers():
-        print("--> Correct \o/")
+        print(f"{Fore.LIGHTGREEN_EX}--> Correct \o/{Style.RESET_ALL}")
         RIGHT += 1
+        wait(.5)
+        answerDict[str(num1) + " " + meth + " " + str(num2) + " = " + str(answer) + " -> "] = "ok"
     else:
-        print(f"--> Wrong! ._. The correct answer is {str(calc.countNumbers())}")
+        print(f"{Fore.LIGHTRED_EX}... WRONG! :-({Style.RESET_ALL}")
+        wait(.5)
+        print(f"{Fore.LIGHTCYAN_EX}--> The correct answer is {Fore.LIGHTWHITE_EX}{str(calc.countNumbers())}{Style.RESET_ALL}")
         WRONG += 1
+        wait(.5)
+        answerDict[str(num1) + " " + meth + " " + str(num2) + " = " + str(answer) + " -> "] = "error"
 
 def osCheckAndClearScreen():
     if platform == "win32":
@@ -77,13 +88,21 @@ def intro():
 def conclusion(quest):
     global RIGHT
     global WRONG
+
+    print(f"\n{Fore.CYAN}Today's Calculations:{Style.RESET_ALL}")
+    for key, value in answerDict.items():
+        if value == "error":
+            print(f"    {Fore.WHITE}{key}{Fore.LIGHTRED_EX}{value}{Style.RESET_ALL}")
+        else:
+            print(f"    {Fore.WHITE}{key}{Fore.LIGHTGREEN_EX}{value}{Style.RESET_ALL}")
+
     print(f"\nYou have answered {str(quest)} questions.")
     print(f"You answered {str(RIGHT)} right answers and made {str(WRONG)} mistakes.")
+
     if WRONG == 0:
-        print("Congratulations!")
+        print(f"\n{Fore.LIGHTCYAN_EX}Congratulations!{Style.RESET_ALL}\n")
     else:
-        print("Better luck next time!")
-    print()
+        print(f"\n{Fore.LIGHTMAGENTA_EX}Better luck next time!{Style.RESET_ALL}\n")
 
 if __name__ == "__main__":
     questions = intro()
