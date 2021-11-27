@@ -79,11 +79,12 @@ def showLogo():
 def intro():
     osCheckAndClearScreen()
     showLogo()
-    howManyQuestions = int(input("\nHello :) How many calculations do you want? (1 to 100): "))
-    if howManyQuestions < 1 or howManyQuestions > 100:
-        intro()
-    else:
+    howManyQuestions = int(input("\nHello :) How many calculations do you want? (1 to 99): "))
+    if 1 <= howManyQuestions < 100:
         return howManyQuestions
+    else:
+        print("Answer out of range 1-99")
+        quit()
 
 def conclusion(quest):
     global RIGHT
